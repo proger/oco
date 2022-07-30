@@ -1,0 +1,139 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Serif&display=swap');
+
+body {
+    font-family: IBM Plex Serif;
+    margin: 0 auto;
+}
+
+header {
+    position: sticky;
+    top: 0;
+    background-color: #eee;
+    padding: 10px 0 1px 10px;
+}
+
+article {
+    padding: 0px 0 0 10px;
+}
+
+.hidden {
+    display: none;
+}
+
+input, textarea, .btn {
+    font-family: IBM Plex Serif;
+    font-size: large;
+    background-color: #efe;
+    border: 1px solid #ddd;
+}
+
+.btn {
+    color: #111;
+}
+
+input[type=search] {
+    width: 98%;
+    height: 2rem;
+}
+
+#player {
+    position: sticky;
+    top: 0;
+}
+
+blockquote {
+    background: #eaeaea;
+    font-weight: bold;
+    font-size: larger;
+}
+
+blockquote a {
+    font-weight: normal;
+}
+
+/*
+ * File from WTF, forms?
+ * Released under MIT and copyright 2014 Mark Otto.
+ * http://wtfforms.com
+ */
+
+
+.file {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    height: 2.5rem;
+    font-size: large;
+    top: -1.5px; /* ??? */
+}
+.file input {
+    min-width: 14rem;
+    margin: 0;
+    filter: alpha(opacity=0);
+    opacity: 0;
+}
+.file-custom {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 5;
+    padding: 2px 6px 3px 2px;
+    color: #555;
+    background-color: #fff;
+    border: 1px solid #ddd;
+}
+:root {
+    --selected-file: "Choose file to upload...";
+}
+.file-custom:after {
+    content: var(--selected-file);
+}
+.file-custom:before {
+    position: absolute;
+    top: -.075rem;
+    right: -.075rem;
+    bottom: -.075rem;
+    z-index: 6;
+    display: block;
+    content: "Browse";
+    padding: 2px 6px 3px 6px;
+    color: #555;
+    background-color: #eee;
+    border: 1px solid #ddd;
+}
+
+/*
+ * wavesurfer regions
+ */
+
+region.wavesurfer-region:before {
+    content: attr(data-region-label);
+}
+
+region.wavesurfer-region[data-region-highlight] {
+    border: 1px solid rgb(86, 180, 239);
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.05) inset, 0px 0px 8px rgba(82, 168, 236, 0.6);
+}
+
+#waveform {
+    position: relative;
+}
+
+.row {
+    display: flex;
+    align-items: center;
+    margin: 10px 30px;
+}
+.col-sm-10 {
+    width: 83.33333333%;
+}
+.col-sm-2 {
+    width: 16.66666667%;
+}
+
+.edit-region {
+    display: flex;
+    align-items: center;
+    padding: 10px 0 1px 10px;
+}
