@@ -1,4 +1,5 @@
 from datetime import datetime
+from itertools import chain
 from pathlib import Path
 
 from fastapi import APIRouter, Request
@@ -9,7 +10,7 @@ from .html import p, a, body, script_inline, header, article, input
 router = APIRouter()
 
 def files():
-    return sorted(Path().glob('**/*.wav'))
+    return sorted(chain(Path().glob('**/*.wav'), Path().glob('**/*.flac'), Path().glob('**/*.mp3')))
 
 
 @router.post('/', response_class=HTMLResponse)
