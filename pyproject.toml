@@ -11,10 +11,6 @@ dynamic = ["version", "description"]
 dependencies = [
     "fastapi",
     "python-multipart",
-]
-
-[project.optional-dependencies]
-dev = [
     "uvicorn",
 ]
 
