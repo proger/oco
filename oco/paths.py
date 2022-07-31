@@ -21,20 +21,31 @@ def parts(path: Path, root: Path) -> Iterable[Path]:
         yield root
 
 
-def path_link(path: Path, file_prefix='/wavesurfer') -> HTML:
-    return p(str(path.parent) + '/', part_link(path, file_prefix=file_prefix), tabindex=0)
+class Links:
+    file_prefix = '/file'
+    dir_prefix = '/file'
 
 
-def part_link(path: Path, file_prefix='/wavesurfer'):
+class AudioLinks(Links):
+    file_prefix = '/wavesurfer'
+    dir_prefix = '/index'
+
+
+def path_link(path: Path, links: Links) -> HTML:
+    link = part_link(path, links)
+    return p(str(path.parent) + '/', link, tabindex=0)
+
+
+def part_link(path: Path, links: Links) -> HTML:
     if path.is_dir():
         name = (path.name or str(path)) + '/'
-        return a(name, f'/index/{path}')
+        return a(name, f'{links.dir_prefix}/{path}')
     else:
-        return a(path.name, f'{file_prefix}/{path}')
+        return a(path.name, f'{links.file_prefix}/{path}')
 
 
-def breadcrumbs(here: Path, file_prefix='/file') -> HTML:
-    return h2(*[part_link(path, file_prefix=file_prefix) for path in parts(here, Path('.'))])
+def breadcrumbs(here: Path, links: Links) -> HTML:
+    return h2(*[part_link(path, links) for path in parts(here, Path('.'))])
 
 
 def relative_path(path: str) -> Path:
