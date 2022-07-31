@@ -60,7 +60,7 @@ def body(*x, title="oco", extrahead=""):
 <html lang=uk>
 <head>
 <meta charset=utf-8>
-<title>""" + escape(str(title)) + """"</title>
+<title>""" + escape(str(title)) + """</title>
 <meta name="twitter:card" content="summary" />
 <meta property="og:title" content="oco" />
 <meta property="og:type" content="website" />
