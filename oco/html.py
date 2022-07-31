@@ -1,70 +1,100 @@
+from collections.abc import Iterable
 from pathlib import Path
 from html import escape
+from typing import Literal
 
-def static() -> Path:
-    return Path(__file__).parent / 'static'
 
-def _make_attr(k):
-    return k # TODO
+Tag = Literal["a", "article", "audio", "div", "h2",
+              "header", "input", "p", "script", "section", "span"]
 
-def _render_attr(k, v):
-    return f"{_make_attr(k)}=\"{escape(str(v))}\"" if v is not None else f"{_make_attr(k)}"
 
-def _render_attrs(attrs):
-    return " ".join(_render_attr(k, attrs[k]) for k in attrs)
+def static(arg) -> Path:
+    return Path(__file__).parent / 'static' / arg
 
-def div(*x, tag="div", **attrs):
-    return f"<{tag} {_render_attrs(attrs)}>" + "\n".join(x) + f"</{tag}>"
 
-def audio(x, **attrs):
-    return f"""
-<audio id=audio controls preload="metadata" playsinline width="100%" {_render_attrs(attrs)}>
+class HTML(str):
+    pass
+
+
+def html(x) -> HTML:
+    if isinstance(x, HTML):
+        return x
+    elif isinstance(x, str):
+        return HTML(escape(x))
+    elif isinstance(x, Iterable):
+        return HTML("\n".join(map(html, x)))
+    else:
+        return HTML(escape(repr(x)))
+
+
+def attr_pair(k, v):
+    return f"{k}=\"{escape(str(v))}\"" if v is not None else f"{k}"
+
+
+def attr_list(attrs):
+    return " ".join(attr_pair(k, attrs[k]) for k in attrs)
+
+
+def a(x, href=None, **attrs) -> HTML:
+    href = escape(href or x)
+    return HTML(f"""<a href="{href}" {attr_list(attrs)}>{html(x)}</a>""")
+
+
+def div(*x, tag: Tag = "div", **attrs) -> HTML:
+    return HTML(f"<{tag} {attr_list(attrs)}>" + html(x) + f"</{tag}>")
+
+
+def audio(x, **attrs) -> HTML:
+    return HTML(f"""
+<audio id=audio controls preload="metadata" playsinline {attr_list(attrs)}>
     <source src="{x}">
 </audio>
-"""
+""")
 
-def p(*x, **attrs):
-    return div(*map(str, x), tag="p", **attrs)
 
-def span(*x, **attrs):
-    return div(*map(str, x), tag="span", **attrs)
+def p(*x, **attrs) -> HTML:
+    return div(*x, tag="p", **attrs)
 
-def h2(*x, **attrs):
-    return div(*map(str, x), tag="h2", **attrs)
 
-def a(x, href=None, **attrs):
-    href = escape(href or x)
-    return f"""<a href="{href}" {_render_attrs(attrs)}>{x}</a>"""
+def span(*x, **attrs) -> HTML:
+    return div(*x, tag="span", **attrs)
 
-def article(*x, **kwargs):
+
+def h2(*x, **attrs) -> HTML:
+    return div(*x, tag="h2", **attrs)
+
+
+def article(*x, **kwargs) -> HTML:
     return div(*x, tag="article", **kwargs)
 
-def section(*x, **kwargs):
+
+def section(*x, **kwargs) -> HTML:
     return div(*x, tag="section", **kwargs)
 
-def header(*x, **kwargs):
+
+def header(*x, **kwargs) -> HTML:
     return div(*x, tag="header", **kwargs)
 
-def script_inline(script_filename: str):
-    return div((static() / script_filename).read_text(), tag="script")
 
-def script(x):
-    return div(x, tag="script")
+def script_inline(script_filename: str) -> HTML:
+    return div(HTML(static(script_filename).read_text()), tag="script")
 
-def input(*, type="search", **kwargs):
+
+def input(*, type="search", **kwargs) -> HTML:
     return div(tag="input", type=type, **kwargs)
 
-def body(*x, title="oco", extrahead=""):
-    return """
+
+def body(*x, title="oco", extrahead="") -> HTML:
+    return HTML("""\
 <!doctype html>
 <html lang=uk>
 <head>
 <meta charset=utf-8>
-<title>""" + escape(str(title)) + """</title>
+<title>""" + html(title) + """</title>
 <meta name="twitter:card" content="summary" />
 <meta property="og:title" content="oco" />
 <meta property="og:type" content="website" />
-""" + extrahead + """
-<style>""" + (static() / 'style.css').read_text() + """</style>
+""" + html(extrahead) + """
+<style>""" + static('style.css').read_text() + """</style>
 </head>
-<body>""" + "\n".join(x)
+<body>""" + html(x))
