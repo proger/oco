@@ -3,7 +3,8 @@ from pathlib import Path
 from fastapi import APIRouter, Body, Response
 from fastapi.responses import HTMLResponse
 
-from .html import HTML, a, div, span, body, script_inline, audio, header, h2
+from .html import HTML, div, span, body, script_inline, audio, header
+from .paths import breadcrumbs
 
 router = APIRouter()
 
@@ -30,7 +31,8 @@ def wavesurfer(path: str):
 
     return body(
         header(
-            h2(a("../", href="/"), path1.name, span(' ', id='subtitle')),
+            breadcrumbs(path1, file_prefix='/file'),
+            span(' ', id='subtitle', **{'class': 'hidden'}),
             audio(f"/file/{path}", **{'class': 'hidden'})
         ),
         HTML("""
