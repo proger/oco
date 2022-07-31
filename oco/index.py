@@ -4,7 +4,7 @@ from fastapi import APIRouter, Request, Response
 from fastapi.responses import HTMLResponse, FileResponse
 
 from .html import p, body, script_inline, header, article, input, HTML
-from .paths import files, breadcrumbs, relative_path, path_link, Links, AudioLinks
+from .paths import files, relative_path, Links
 
 router = APIRouter()
 
@@ -37,7 +37,7 @@ def upload_form() -> HTML:
 def index_page(relpath, results, links: Links) -> HTML:
     return body(
         header(
-            breadcrumbs(relpath, links) if relpath.name else HTML(""),
+            links.breadcrumbs(relpath) if relpath.name else HTML(""),
             input(type="search", id="searchbox", placeholder="Search", autofocus=None, spellcheck="false"),
             script_inline('index.js'),
             p(f'{len(results)} results', id="counter"),
@@ -52,8 +52,8 @@ def index_page(relpath, results, links: Links) -> HTML:
 @router.get('/index/{path:path}', response_class=HTMLResponse)
 def index_view(path: str = '.'):
     relpath = relative_path(path)
-    links = AudioLinks()
-    results = [path_link(path, links) for path in files(relpath)]
+    links = Links()
+    results = [links.path(path) for path in files(relpath)]
     return index_page(relpath, results, links)
 
 
@@ -62,7 +62,7 @@ def file(path: str):
     relpath = relative_path(path)
     links = Links()
     if relpath.is_dir():
-        results = [path_link(sub, links) for sub in sorted(relpath.iterdir())]
+        results = [links.path(sub) for sub in sorted(relpath.iterdir())]
         return HTMLResponse(index_page(relpath, results, links))
     elif relpath.exists():
         return FileResponse(relpath)

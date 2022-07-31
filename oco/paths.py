@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from pathlib import Path
 import re
 from typing import Iterable
@@ -5,7 +6,7 @@ from typing import Iterable
 from .html import HTML, a, h2, p
 
 
-def files(here: Path, pattern=re.compile(r'(\.(flac|mp3|wav)|/)$')) -> Iterable[Path]:
+def files(here: Path, pattern=re.compile(r'')) -> Iterable[Path]:
     for path in sorted(here.iterdir()):
         path_repr = str(path) + '/' if path.is_dir() else str(path)
         if pattern.search(path_repr):
@@ -21,31 +22,27 @@ def parts(path: Path, root: Path) -> Iterable[Path]:
         yield root
 
 
+@dataclass(frozen=True)
 class Links:
-    file_prefix = '/file'
-    dir_prefix = '/file'
+    file_prefix: str = '/file'
+    dir_prefix: str = '/index'
+    media_prefix: str = '/wavesurfer'
+    media_file = re.compile(r'\.(flac|mp3|wav)$')
 
+    def path(self, path: Path) -> HTML:
+        return p(str(path.parent) + '/', self.part(path), tabindex=0)
 
-class AudioLinks(Links):
-    file_prefix = '/wavesurfer'
-    dir_prefix = '/index'
+    def part(self, path: Path) -> HTML:
+        if path.is_dir():
+            name = (path.name or str(path)) + '/'
+            return a(name, f'{self.dir_prefix}/{path}')
+        elif self.media_file.search(path.name):
+            return a(path.name, f'{self.media_prefix}/{path}')
+        else:
+            return a(path.name, f'{self.file_prefix}/{path}')
 
-
-def path_link(path: Path, links: Links) -> HTML:
-    link = part_link(path, links)
-    return p(str(path.parent) + '/', link, tabindex=0)
-
-
-def part_link(path: Path, links: Links) -> HTML:
-    if path.is_dir():
-        name = (path.name or str(path)) + '/'
-        return a(name, f'{links.dir_prefix}/{path}')
-    else:
-        return a(path.name, f'{links.file_prefix}/{path}')
-
-
-def breadcrumbs(here: Path, links: Links) -> HTML:
-    return h2(*[part_link(path, links) for path in parts(here, Path('.'))])
+    def breadcrumbs(self, here: Path) -> HTML:
+        return h2(*[self.part(path) for path in parts(here, Path('.'))])
 
 
 def relative_path(path: str) -> Path:
