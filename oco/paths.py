@@ -6,7 +6,7 @@ from .html import HTML, a, h2, p
 
 
 def files(here: Path, pattern=re.compile(r'(\.(flac|mp3|wav)|/)$')) -> Iterable[Path]:
-    for path in here.iterdir():
+    for path in sorted(here.iterdir()):
         path_repr = str(path) + '/' if path.is_dir() else str(path)
         if pattern.search(path_repr):
             yield path
