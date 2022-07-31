@@ -13,6 +13,7 @@ dependencies = [
     "python-multipart",
     "uvicorn",
 ]
+readme = "README.md"
 
 [project.urls]
 Home = "https://github.com/proger/oco"
