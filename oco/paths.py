@@ -57,5 +57,5 @@ class Links:
         return h2(*[self.part(path) for path in parts(here, Path('.'))])
 
 
-def relative_path(path: str) -> Path:
+def safe_relative_path(path: str) -> Path:
     return Path(path).resolve().relative_to(Path().resolve())

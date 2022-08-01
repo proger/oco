@@ -4,7 +4,7 @@ from fastapi import APIRouter, Request, Response
 from fastapi.responses import HTMLResponse, FileResponse
 
 from .html import p, body, script_inline, header, article, input, HTML
-from .paths import files, relative_path, Links
+from .paths import files, safe_relative_path, Links
 
 router = APIRouter()
 
@@ -17,7 +17,7 @@ async def post(request: Request, here: str = '.'):
     filename = datetime.now().isoformat() + '+' + original_filename
     contents = await form["file"].read()  # type: ignore
 
-    with open(relative_path(here) / filename, 'w+b') as f:
+    with open(safe_relative_path(here) / filename, 'w+b') as f:
         f.write(contents)
         f.flush()
     return index_view(path=here)
@@ -51,7 +51,7 @@ def index_page(relpath, results, links: Links) -> HTML:
 @router.get('/', response_class=HTMLResponse)
 @router.get('/index/{path:path}', response_class=HTMLResponse)
 def index_view(path: str = '.', maxdepth: int = 1):
-    relpath = relative_path(path)
+    relpath = safe_relative_path(path)
     links = Links()
     results = [links.path(path) for path in files(relpath, maxdepth=maxdepth)]
     return index_page(relpath, results, links)
@@ -59,7 +59,7 @@ def index_view(path: str = '.', maxdepth: int = 1):
 
 @router.get('/file/{path:path}')
 def file(path: str):
-    relpath = relative_path(path)
+    relpath = safe_relative_path(path)
     links = Links()
     if relpath.is_dir():
         results = [links.path(sub) for sub in files(relpath, maxdepth=0)]
