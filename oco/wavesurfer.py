@@ -1,24 +1,22 @@
-from pathlib import Path
-
 from fastapi import APIRouter, Body, Response
 from fastapi.responses import HTMLResponse
 
 from .html import HTML, div, span, body, script_inline, audio, header
-from .paths import Links
+from .paths import Links, safe_relative_path
 
 router = APIRouter()
 
 
 @router.post('/wavesurfer/{path:path}')
 def spans_post(path: str, body: bytes = Body(b'')):
-    spans = Path(path).with_suffix('.spans')
+    spans = safe_relative_path(path).with_suffix('.spans')
     spans.write_bytes(body)
     return Response()
 
 
 @router.get('/spans/{path:path}', response_class=Response)
 def spans_get(path: str):
-    spans = Path(path).with_suffix('.spans')
+    spans = safe_relative_path(path).with_suffix('.spans')
     try:
         return spans.read_bytes()
     except FileNotFoundError:
@@ -27,7 +25,7 @@ def spans_get(path: str):
 
 @router.get('/wavesurfer/{path:path}', response_class=HTMLResponse)
 def wavesurfer(path: str):
-    path1 = Path(path)
+    path1 = safe_relative_path(path)
 
     return body(
         header(
