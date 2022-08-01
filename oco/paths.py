@@ -7,7 +7,7 @@ from typing import Iterable
 from .html import HTML, a, h2, p
 
 
-def files(here: Path, maxdepth=int(os.environ.get('MAXDEPTH', 1))) -> Iterable[Path]:
+def files(here: Path, maxdepth=1) -> Iterable[Path]:
     if maxdepth < 0:
         return
 

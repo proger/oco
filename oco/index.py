@@ -50,10 +50,10 @@ def index_page(relpath, results, links: Links) -> HTML:
 
 @router.get('/', response_class=HTMLResponse)
 @router.get('/index/{path:path}', response_class=HTMLResponse)
-def index_view(path: str = '.'):
+def index_view(path: str = '.', maxdepth: int = 1):
     relpath = relative_path(path)
     links = Links()
-    results = [links.path(path) for path in files(relpath)]
+    results = [links.path(path) for path in files(relpath, maxdepth=maxdepth)]
     return index_page(relpath, results, links)
 
 
@@ -62,7 +62,7 @@ def file(path: str):
     relpath = relative_path(path)
     links = Links()
     if relpath.is_dir():
-        results = [links.path(sub) for sub in sorted(relpath.iterdir())]
+        results = [links.path(sub) for sub in files(relpath, maxdepth=0)]
         return HTMLResponse(index_page(relpath, results, links))
     elif relpath.exists():
         return FileResponse(relpath)
