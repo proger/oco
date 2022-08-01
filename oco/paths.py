@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import os
 from pathlib import Path
 import re
 from typing import Iterable
@@ -6,13 +7,24 @@ from typing import Iterable
 from .html import HTML, a, h2, p
 
 
-def files(here: Path, pattern=re.compile(r'')) -> Iterable[Path]:
-    for path in sorted(here.iterdir()):
-        path_repr = str(path) + '/' if path.is_dir() else str(path)
-        if pattern.search(path_repr):
+def files(here: Path, maxdepth=int(os.environ.get('MAXDEPTH', 1))) -> Iterable[Path]:
+    if maxdepth < 0:
+        return
+
+    try:
+        items = sorted(here.iterdir())
+    except PermissionError:
+        return
+
+    for path in items:
+        try:
+            if path.is_symlink():
+                continue
             yield path
-        if path.is_dir():
-            yield from files(path, pattern=pattern)
+            if path.is_dir():
+                yield from files(path, maxdepth=maxdepth-1)
+        except OSError:
+            continue
 
 
 def parts(path: Path, root: Path) -> Iterable[Path]:
