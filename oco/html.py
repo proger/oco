@@ -22,7 +22,7 @@ def html(x) -> HTML:
     elif isinstance(x, str):
         return HTML(escape(x))
     elif isinstance(x, Iterable):
-        return HTML("\n".join(map(html, x)))
+        return HTML("".join(map(html, x)))
     else:
         return HTML(escape(repr(x)))
 
