@@ -9,8 +9,9 @@ from .paths import files, safe_relative_path, Links
 router = APIRouter()
 
 
-@router.post('/', response_class=HTMLResponse)
-@router.post('/index/{here:path}', response_class=HTMLResponse)
+# XXX: uploading needs to be made optional
+#@router.post('/', response_class=HTMLResponse)
+#@router.post('/index/{here:path}', response_class=HTMLResponse)
 async def post(request: Request, here: str = '.'):
     form = await request.form()
     original_filename = form["file"].filename  # type: ignore
@@ -41,7 +42,7 @@ def index_page(relpath, results, links: Links) -> HTML:
             input(type="search", id="searchbox", placeholder="Search", autofocus=None, spellcheck="false"),
             script_inline('index.js'),
             p(f'{len(results)} results', id="counter"),
-            upload_form(),
+            #upload_form(),
         ),
         article(*results, id="results"),
         title=str(relpath)
