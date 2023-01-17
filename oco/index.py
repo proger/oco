@@ -17,7 +17,7 @@ async def post(request: Request, here: str = '.'):
     filename = datetime.now().isoformat() + '+' + original_filename
     contents = await form["file"].read()  # type: ignore
 
-    with open(safe_relative_path(here) / filename, 'w+b') as f:
+    with open(safe_relative_path(safe_relative_path(here) / filename), 'w+b') as f:
         f.write(contents)
         f.flush()
     return index_view(path=here)

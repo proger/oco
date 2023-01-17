@@ -39,7 +39,7 @@ class Links:
     file_prefix: str = '/file'
     dir_prefix: str = '/index'
     media_prefix: str = '/wavesurfer'
-    media_file = re.compile(r'\.(flac|mp3|wav)$')
+    media_file = re.compile(r'\.(flac|mp3|wav|webm)$')
 
     def path(self, path: Path) -> HTML:
         return p(str(path.parent) + '/', self.part(path), tabindex=0)
