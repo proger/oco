@@ -1,0 +1,101 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Serif&display=swap');
+
+:root {
+    color-scheme: light dark;
+    --bg: #ffffff;
+    --text: #111111;
+    --grid: #eeeeee;
+    --panel: #fafafa;
+    --marker: #ff0000;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #0f0f10;
+        --text: #e6e6e6;
+        --grid: #26292e;
+        --panel: #1a1b1d;
+        --marker: #ff5c5c;
+    }
+}
+
+* {
+    touch-action: none;
+    font-family: IBM Plex Serif;
+}
+
+body {
+    overscroll-behavior-x: none;
+    overscroll-behavior-y: none;
+    margin: 0 10;
+    padding-bottom: 60px; /* keep content clear of sticky footer */
+    color: var(--text);
+    background-color: var(--bg);
+    background-size: 10px 10px;
+    background-image:
+        linear-gradient(to right, var(--grid) 0px, transparent 1px),
+        linear-gradient(to bottom, var(--grid) 0px, transparent 1px);
+}
+
+header {
+    position: sticky;
+    left: 0;
+    top: 0;
+    z-index: 1;
+    width: 100%;
+    min-height: 50px;
+    background: var(--panel);
+}
+
+div#viewer {
+    min-height: 200px;
+}
+
+footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    z-index: 1;
+    width: 100%;
+    min-height: 50px;
+    background: var(--panel);
+}
+
+.log {
+    margin: 0 auto;
+    padding: 10px 10px;
+    font-family: monospace;
+}
+
+.marker {
+    background-color: var(--marker);
+    opacity: .3;
+    position: absolute;
+    pointer-events: none;
+    z-index: 100;
+}
+
+.tracks span {
+    font-family: monospace;
+}
+
+img {
+    image-rendering: pixelated;
+}
+
+.highlighted {
+    background-color: #98444744;
+}
+
+.noselect {
+    user-select: none;
+}
+
+.track {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.waveform {
+    cursor: text;
+}

@@ -3,16 +3,21 @@ import os
 from pathlib import Path
 import re
 from typing import Iterable
+from urllib.parse import quote
 
 from .html import HTML, a, h2, p
 
 
-def files(here: Path, maxdepth=1) -> Iterable[Path]:
+def files(here: Path, maxdepth=0, root=True) -> Iterable[Path]:
     if maxdepth < 0:
         return
 
     try:
-        items = sorted(here.iterdir())
+        items = sorted(
+            here.iterdir(),
+            key=lambda path: _mtime(path),
+            reverse=True,
+        )
     except PermissionError:
         return
 
@@ -20,11 +25,20 @@ def files(here: Path, maxdepth=1) -> Iterable[Path]:
         try:
             if path.is_symlink():
                 continue
-            yield path
-            if path.is_dir():
-                yield from files(path, maxdepth=maxdepth-1)
+            if path.suffix in ['.wav', '.png'] and root:
+                yield path
+            if path.is_dir() and (path.name not in ['.git']):
+                yield path
+                yield from files(path, maxdepth=maxdepth-1, root=False)
         except OSError:
             continue
+
+
+def _mtime(path: Path) -> float:
+    try:
+        return path.stat().st_mtime
+    except OSError:
+        return 0.0
 
 
 def parts(path: Path, root: Path) -> Iterable[Path]:
@@ -38,11 +52,8 @@ def parts(path: Path, root: Path) -> Iterable[Path]:
 class Links:
     file_prefix: str = '/file'
     dir_prefix: str = '/index'
-    media_prefix: str = '/wavesurfer'
+    media_prefix: str = '/wav'
     media_file = re.compile(r'\.(flac|mp3|wav|webm)$')
-
-    def path(self, path: Path) -> HTML:
-        return p(str(path.parent) + '/', self.part(path), tabindex=0)
 
     def part(self, path: Path) -> HTML:
         if path.is_dir():

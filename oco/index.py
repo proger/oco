@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from fastapi import APIRouter, Request, Response
 from fastapi.responses import HTMLResponse, FileResponse
 
@@ -9,62 +7,40 @@ from .paths import files, safe_relative_path, Links
 router = APIRouter()
 
 
-# XXX: uploading needs to be made optional
-#@router.post('/', response_class=HTMLResponse)
-#@router.post('/index/{here:path}', response_class=HTMLResponse)
-async def post(request: Request, here: str = '.'):
-    form = await request.form()
-    original_filename = form["file"].filename  # type: ignore
-    filename = datetime.now().isoformat() + '+' + original_filename
-    contents = await form["file"].read()  # type: ignore
-
-    with open(safe_relative_path(safe_relative_path(here) / filename), 'w+b') as f:
-        f.write(contents)
-        f.flush()
-    return index_view(path=here)
-
-
-def upload_form() -> HTML:
-    return HTML("""\
-<form name="form" id="form" method="post" enctype="multipart/form-data">
-<label class="file">
-  <input type="file" name="file" id="file" aria-label="File browser">
-  <span class="file-custom"></span>
-</label>
-<input type=submit value="Upload" />
-</form>""")
-
-
-def index_page(relpath, results, links: Links) -> HTML:
+def index_page(relpath, maxdepth: int = 2) -> HTML:
+    links = Links()
+    rows = [
+        p(str(path.parent) + '/', links.part(path), tabindex=0)
+        for path in files(relpath, maxdepth=maxdepth)
+    ]
     return body(
         header(
             links.breadcrumbs(relpath) if relpath.name else HTML(""),
             input(type="search", id="searchbox", placeholder="Search", autofocus=None, spellcheck="false"),
             script_inline('index.js'),
-            p(f'{len(results)} results', id="counter"),
-            #upload_form(),
+            p(f'{len(rows)} results', id="counter"),
         ),
-        article(*results, id="results"),
+        article(*rows, id="results"),
         title=str(relpath)
     )
 
 
 @router.get('/', response_class=HTMLResponse)
 @router.get('/index/{path:path}', response_class=HTMLResponse)
-def index_view(path: str = '.', maxdepth: int = 1):
+def index_view(path: str = '.', maxdepth: int = 2):
     relpath = safe_relative_path(path)
-    links = Links()
-    results = [links.path(path) for path in files(relpath, maxdepth=maxdepth)]
-    return index_page(relpath, results, links)
+    return index_page(relpath)
+
+@router.get('/robots.txt')
+def robots_txt():
+    return Response("User-agent: *\nDisallow: /", media_type="text/plain")
 
 
 @router.get('/file/{path:path}')
 def file(path: str):
     relpath = safe_relative_path(path)
-    links = Links()
     if relpath.is_dir():
-        results = [links.path(sub) for sub in files(relpath, maxdepth=0)]
-        return HTMLResponse(index_page(relpath, results, links))
+        return HTMLResponse(index_page(relpath))
     elif relpath.exists():
         return FileResponse(relpath)
     else:

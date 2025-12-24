@@ -1,14 +1,43 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Serif&display=swap');
 
+:root {
+    color-scheme: light dark;
+    --bg: #ffffff;
+    --text: #111111;
+    --panel: #f7f7f7;
+    --muted: #eeeeee;
+    --input-bg: #eef7ee;
+    --border: #dddddd;
+    --blockquote-bg: #eaeaea;
+    --file-bg: #ffffff;
+    --file-text: #555555;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #0f0f10;
+        --text: #e6e6e6;
+        --panel: #1a1b1d;
+        --muted: #2a2c2f;
+        --input-bg: #14171a;
+        --border: #3a3d42;
+        --blockquote-bg: #1f2124;
+        --file-bg: #14171a;
+        --file-text: #c9c9c9;
+    }
+}
+
 body {
     font-family: IBM Plex Serif;
     margin: 0 auto;
+    background-color: var(--bg);
+    color: var(--text);
 }
 
 header {
     position: sticky;
     top: 0;
-    background-color: #eee;
+    background-color: var(--muted);
     padding: 10px 0 1px 10px;
 }
 
@@ -23,12 +52,13 @@ article {
 input, textarea, .btn {
     font-family: IBM Plex Serif;
     font-size: large;
-    background-color: #efe;
-    border: 1px solid #ddd;
+    background-color: var(--input-bg);
+    border: 1px solid var(--border);
+    color: var(--text);
 }
 
 .btn {
-    color: #111;
+    color: var(--text);
 }
 
 input[type=search] {
@@ -42,7 +72,7 @@ input[type=search] {
 }
 
 blockquote {
-    background: #eaeaea;
+    background: var(--blockquote-bg);
     font-weight: bold;
     font-size: larger;
 }
@@ -79,9 +109,9 @@ blockquote a {
     left: 0;
     z-index: 5;
     padding: 2px 6px 3px 2px;
-    color: #555;
-    background-color: #fff;
-    border: 1px solid #ddd;
+    color: var(--file-text);
+    background-color: var(--file-bg);
+    border: 1px solid var(--border);
 }
 :root {
     --selected-file: "Choose file to upload...";
@@ -98,9 +128,9 @@ blockquote a {
     display: block;
     content: "Browse";
     padding: 2px 6px 3px 6px;
-    color: #555;
-    background-color: #eee;
-    border: 1px solid #ddd;
+    color: var(--file-text);
+    background-color: var(--muted);
+    border: 1px solid var(--border);
 }
 
 /*

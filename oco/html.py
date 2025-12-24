@@ -4,7 +4,7 @@ from html import escape
 from typing import Literal
 
 
-Tag = Literal["a", "article", "audio", "div", "h2",
+Tag = Literal["a", "article", "audio", "div", "footer", "h2",
               "header", "input", "p", "script", "section", "span"]
 
 
@@ -74,6 +74,9 @@ def section(*x, **kwargs) -> HTML:
 
 def header(*x, **kwargs) -> HTML:
     return div(*x, tag="header", **kwargs)
+
+def footer(*x, **kwargs) -> HTML:
+    return div(*x, tag="footer", **kwargs)
 
 
 def script_inline(script_filename: str) -> HTML:
