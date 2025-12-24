@@ -40,7 +40,7 @@ def a(x, href=None, **attrs) -> HTML:
     return HTML(f"""<a href="{href}" {attr_list(attrs)}>{html(x)}</a>""")
 
 
-def div(*x, tag: Tag = "div", **attrs) -> HTML:
+def div(*x, tag: Tag | str = "div", **attrs) -> HTML:
     return HTML(f"<{tag} {attr_list(attrs)}>" + html(x) + f"</{tag}>")
 
 
