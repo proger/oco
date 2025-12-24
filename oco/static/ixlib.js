@@ -32,7 +32,7 @@ function meme(x) {
     state = {...x};
     log.insertAdjacentHTML('afterbegin', `<div>ᴼᶜᴼ ${JSON.stringify(state)}</div>`);
     while (log.childElementCount > 1) {
-	log.removeChild(log.lastElementChild);
+        log.removeChild(log.lastElementChild);
     }
 }
 meme({loading: true});
@@ -45,9 +45,9 @@ var offlineAudioCtx = new (window.OfflineAudioContext || window.webkitOfflineAud
 
 function decodeAudio(arrayBuffer) {
     return new Promise(resolve => {
-	offlineAudioCtx.decodeAudioData(arrayBuffer, function(audioBuffer) {
-	    return resolve(audioBuffer);
-	});
+        offlineAudioCtx.decodeAudioData(arrayBuffer, function(audioBuffer) {
+            return resolve(audioBuffer);
+        });
     });
 }
 
@@ -61,15 +61,15 @@ function resample(audioBuffer) {
     const out = new Float32Array(2*blocks);
 
     for (let i = 0; i < blocks; i++) {
-	let min = 1, max = -1;
-	for (let j = i*blocksize; j < (i+1)*blocksize; j++) {
-	    if (pcm[j] < min)
-		min = pcm[j];
-	    if (pcm[j] > max)
-		max = pcm[j];
-	}
-	out[2*i] = min;
-	out[2*i+1] = max;
+        let min = 1, max = -1;
+        for (let j = i*blocksize; j < (i+1)*blocksize; j++) {
+            if (pcm[j] < min)
+                min = pcm[j];
+            if (pcm[j] > max)
+                max = pcm[j];
+        }
+        out[2*i] = min;
+        out[2*i+1] = max;
     }
     return out;
 }
@@ -100,13 +100,13 @@ function renderall() {
     meme({guide: "drag to select; ␣ to play/pause; ⇧+␣ to loop play; ⏎ to mark; ⌫ to unmark; w to select words; z to snap to zero; ⇧+z to snap to 2 glottal periods; s to download selection; ⇧+s to download 16x loop; +/- to change page size; ⇧+/- to change waveform gain"});
 
     for (let p = 0; p < npages; p++) {
-	renderpage(p);
+        renderpage(p);
     }
     for (let p = npages; p < _pagecache.length; p++) {
-	const page = _pagecache[p];
-	if (page && page.container && page.container.parentNode === pageroot) {
-	    pageroot.removeChild(page.container);
-	}
+        const page = _pagecache[p];
+        if (page && page.container && page.container.parentNode === pageroot) {
+            pageroot.removeChild(page.container);
+        }
     }
     _pagecache.length = Math.min(_pagecache.length, npages);
 }
@@ -118,95 +118,95 @@ function wordseq(words) {
     // and there are no overlaps
 
     function intersect([a,b]) { // intervals must not overlap
-	let begin = find(a);
-	while (begin > 0 && intersection(words[begin-1].interval, [a,b]) != null) {
-	    begin--;
-	}
+        let begin = find(a);
+        while (begin > 0 && intersection(words[begin-1].interval, [a,b]) != null) {
+            begin--;
+        }
 
-	let end = find(b);
-	while (end > 0 && intersection(words[end-1].interval, [a,b]) == null) {
-	    end--;
-	}
-	const ret = words.slice(begin, end);
-	//console.log('intersect', begin, end, [a,b], ret.length ? ret[0].interval : 'meh', ret.length ? ret[ret.length-1].interval : 'meh');
-	return ret;
+        let end = find(b);
+        while (end > 0 && intersection(words[end-1].interval, [a,b]) == null) {
+            end--;
+        }
+        const ret = words.slice(begin, end);
+        //console.log('intersect', begin, end, [a,b], ret.length ? ret[0].interval : 'meh', ret.length ? ret[ret.length-1].interval : 'meh');
+        return ret;
     }
 
     function find(offset) {
-	let l = 0;
-	let r = words.length-1;
-	while (true) {
-	    let i = (l+r)/2|0;
+        let l = 0;
+        let r = words.length-1;
+        while (true) {
+            let i = (l+r)/2|0;
 
-	    if ( r < l ) {
-		// l is the place to insert
-		return l;
-	    }
+            if ( r < l ) {
+                // l is the place to insert
+                return l;
+            }
 
-	    if (words[i].interval[0] < offset) {
-		l = i+1;
-	    } else {
-		r = i-1;
-	    }
-	}
+            if (words[i].interval[0] < offset) {
+                l = i+1;
+            } else {
+                r = i-1;
+            }
+        }
     }
 
     function create([a,b]) {
-	if (intersect([a,b]).length) {
-	    console.log('ignored overlapping interval!', [a,b]);
-	    return false;
-	}
-	let index = find(a);
-	words.splice(index, 0, {interval: [a,b]});
-	return true;
+        if (intersect([a,b]).length) {
+            console.log('ignored overlapping interval!', [a,b]);
+            return false;
+        }
+        let index = find(a);
+        words.splice(index, 0, {interval: [a,b]});
+        return true;
     }
 
     function killIntersection([u,v]) {
-	const ix = intersect([u,v]);
-	if (!ix) {
-	    return null;
-	}
+        const ix = intersect([u,v]);
+        if (!ix) {
+            return null;
+        }
 
-	const out = []; // list of remaining intervals
-	for (const x of ix) {
-	    const [a,b] = x.interval;
-	    const index = find(a);
-	    if (u < a) {
-		if (v >= b) {
-		    // selection covers
-		    // : remove the whole thing
-		    words.splice(index, 1);
-		} else {
-		    // selection extends to the left
+        const out = []; // list of remaining intervals
+        for (const x of ix) {
+            const [a,b] = x.interval;
+            const index = find(a);
+            if (u < a) {
+                if (v >= b) {
+                    // selection covers
+                    // : remove the whole thing
+                    words.splice(index, 1);
+                } else {
+                    // selection extends to the left
 
-		    // replace the interval
-		    x.interval = [v,b];
-		    out.push([v,b]);
-		}
-	    } else {
-		if (v < b) {
-		    // selection is inside
-		    words.splice(index, 1,
-				 a == u ? undefined : Object.assign(Object.assign({}, x), {interval: [a,u]}),
-				 v == b ? undefined : Object.assign(Object.assign({}, x), {interval: [v,b]}));
-		    if (a != u) {
-			out.push([a,u]);
-		    }
-		    if (v != b) {
-			out.push([v,b]);
-		    }
-		} else {
-		    if (a == u) {
-			words.splice(index, 1); // do not
-		    } else {
-			// selection extends to the right
-			x.interval = [a,u];
-			out.push([a,u]);
-		    }
-		}
-	    }
-	}
-	return out;
+                    // replace the interval
+                    x.interval = [v,b];
+                    out.push([v,b]);
+                }
+            } else {
+                if (v < b) {
+                    // selection is inside
+                    words.splice(index, 1,
+                                 a == u ? undefined : Object.assign(Object.assign({}, x), {interval: [a,u]}),
+                                 v == b ? undefined : Object.assign(Object.assign({}, x), {interval: [v,b]}));
+                    if (a != u) {
+                        out.push([a,u]);
+                    }
+                    if (v != b) {
+                        out.push([v,b]);
+                    }
+                } else {
+                    if (a == u) {
+                        words.splice(index, 1); // do not
+                    } else {
+                        // selection extends to the right
+                        x.interval = [a,u];
+                        out.push([a,u]);
+                    }
+                }
+            }
+        }
+        return out;
     }
 
     return {words, find, intersect, create, killIntersection};
@@ -228,21 +228,21 @@ var selpages = g2pages(sel);
 function applysel(extend) {
     let newpart = null;
     if (selstart !== null && selnow !== null) {
-	newpart = [Math.round(selstart), Math.round(selnow)].sort((a,b) => a-b);
+        newpart = [Math.round(selstart), Math.round(selnow)].sort((a,b) => a-b);
     }
     if (!sel || !extend) {
-	return newpart;
+        return newpart;
     }
     if (sel && newpart) {
-	const ix = intersection(newpart, sel);
-	const u = union(newpart, sel);
-	if (isize(u) > isize(sel)) {
-	    return u;
-	} else {
-	    return ix;
-	}
+        const ix = intersection(newpart, sel);
+        const u = union(newpart, sel);
+        if (isize(u) > isize(sel)) {
+            return u;
+        } else {
+            return ix;
+        }
     } else {
-	return sel;
+        return sel;
     }
 }
 
@@ -253,51 +253,51 @@ function refreshpages() {
 
     //console.log('torefresh', torefresh);
     for (const p of torefresh) { // todo: only rerender boundary pages when possible
-	renderpage(p);
+        renderpage(p);
     }
 }
 
 function mouseEvents() {
     function mousedown(e) {
-	//console.log('mousedown', e);
+        //console.log('mousedown', e);
 
-	// shift continues previous selection
-	if (!e.shiftKey && e.target && e.target.dataset.page != null) {
-	    clearSelection();
-	    waveformSelect = true;
-	    for (const el of document.querySelectorAll('.annotations')) {
-		el.classList.add('noselect');
-	    }
+        // shift continues previous selection
+        if (!e.shiftKey && e.target && e.target.dataset.page != null) {
+            clearSelection();
+            waveformSelect = true;
+            for (const el of document.querySelectorAll('.annotations')) {
+                el.classList.add('noselect');
+            }
 
-	    const p = parseInt(e.target.dataset.page);
-	    const second = mx2g(p, e);
-	    selstart = mx2g(p,e);
-	    selnow = selstart;
+            const p = parseInt(e.target.dataset.page);
+            const second = mx2g(p, e);
+            selstart = mx2g(p,e);
+            selnow = selstart;
 
-	    sel = applysel(e.shiftKey);
-	    refreshpages();
-	}
+            sel = applysel(e.shiftKey);
+            refreshpages();
+        }
     }
 
     function mousemove(e) {
-	if (waveformSelect && e.target && e.target.dataset.page != null) {
-	    //console.log('mousemove', e);
+        if (waveformSelect && e.target && e.target.dataset.page != null) {
+            //console.log('mousemove', e);
 
-	    const p = parseInt(e.target.dataset.page);
-	    selnow = mx2g(p, e);
+            const p = parseInt(e.target.dataset.page);
+            selnow = mx2g(p, e);
 
-	    sel = applysel(false);
-	    refreshpages();
-	    meme({sel});
-	}
+            sel = applysel(false);
+            refreshpages();
+            meme({sel});
+        }
 
     }
 
     function dblclick(e) {
-	if (e.target && e.target.dataset.page != null) {
-	    const p = parseInt(e.target.dataset.page);
-	    meme(selintersection([mx2g(p, e), mx2g(p, e)], e));
-	}
+        if (e.target && e.target.dataset.page != null) {
+            const p = parseInt(e.target.dataset.page);
+            meme(selintersection([mx2g(p, e), mx2g(p, e)], e));
+        }
     }
 
     return {mousedown, mousemove, dblclick};
@@ -321,9 +321,9 @@ function selintersection([a,b], e) { // XXX: should probably tell selected words
     }
 
     if (intervalTrackName == 'waveform') {
-	sel = applysel(e.shiftKey);
-	refreshpages();
-	return {sel, track: intervalTrackName};
+        sel = applysel(e.shiftKey);
+        refreshpages();
+        return {sel, track: intervalTrackName};
     }
 
     const intervals = window.intervalTracks.get(intervalTrackName);
@@ -335,16 +335,16 @@ function selintersection([a,b], e) { // XXX: should probably tell selected words
 
     const ix = intervals.intersect([a,b]);
     if (ix.length) {
-	selstart = ix[0].interval[0];
-	selnow = ix[ix.length-1].interval[1];
+        selstart = ix[0].interval[0];
+        selnow = ix[ix.length-1].interval[1];
 
-	sel = imargin(applysel(e.shiftKey));
-	refreshpages();
-	return {sel, track: intervalTrackName};
+        sel = imargin(applysel(e.shiftKey));
+        refreshpages();
+        return {sel, track: intervalTrackName};
     } else {
-	sel = imargin(applysel(e.shiftKey));
-	refreshpages();
-	return {sel, track: intervalTrackName};
+        sel = imargin(applysel(e.shiftKey));
+        refreshpages();
+        return {sel, track: intervalTrackName};
     }
 }
 
@@ -355,20 +355,20 @@ var _mouseEvents = window._mouseEvents;
 window.addEventListener('mouseup', function(e) {
     //console.log('mouseup', e);
     if (waveformSelect) {
-	waveformSelect = false;
-	for (const el of document.querySelectorAll('.annotations')) {
-	    el.classList.remove('noselect');
-	}
+        waveformSelect = false;
+        for (const el of document.querySelectorAll('.annotations')) {
+            el.classList.remove('noselect');
+        }
     }
 
     if (e.target && e.target.dataset.page != null) {
-	const p = parseInt(e.target.dataset.page);
-	const s = mx2g(p, e);
-	selnow = s;
+        const p = parseInt(e.target.dataset.page);
+        const s = mx2g(p, e);
+        selnow = s;
 
-	sel = applysel(e.shiftKey);
-	refreshpages();
-	meme(selintersection(sel, e));
+        sel = applysel(e.shiftKey);
+        refreshpages();
+        meme(selintersection(sel, e));
 
     }
 });
@@ -401,54 +401,54 @@ window._pagecache = []; // [Map<key, track>];
 var _pagecache = window._pagecache;
 function getpage(n) {
     if (n > 0) {
-	getpage(n-1);
+        getpage(n-1);
     }
 
     if (_pagecache[n] === undefined) {
-	const container = document.createElement('div');
+        const container = document.createElement('div');
 
-	const pageroot = document.getElementById('viewer') || document.body;
-	pageroot.appendChild(container);
-	container.style.position = 'relative';
+        const pageroot = document.getElementById('viewer') || document.body;
+        pageroot.appendChild(container);
+        container.style.position = 'relative';
 
-	const ca = mkcanvas(container, waveformHeight);
-	ca.classList.add('waveform');
+        const ca = mkcanvas(container, waveformHeight);
+        ca.classList.add('waveform');
 
-	const pitchCanvas = window.pitchTrack ? mkcanvas(container, pitchHeight) : null;
-	if (pitchCanvas) {
-	    pitchCanvas.classList.add('pitch');
-	}
+        const pitchCanvas = window.pitchTrack ? mkcanvas(container, pitchHeight) : null;
+        if (pitchCanvas) {
+            pitchCanvas.classList.add('pitch');
+        }
 
-	const tracks = new Map();
+        const tracks = new Map();
 
-	for (const [trackName, seq] of window.intervalTracks) {
-	    const canvas = mkcanvas(container, 20);
-	    canvas.classList.add('track');
-	    tracks.set(trackName, {canvas});
+        for (const [trackName, seq] of window.intervalTracks) {
+            const canvas = mkcanvas(container, 20);
+            canvas.classList.add('track');
+            tracks.set(trackName, {canvas});
 
-	    if (seq.words.length && seq.words[0].name) {
-		const wordsdiv = document.createElement('div');
-		wordsdiv.classList.add('tracks');
-		container.appendChild(wordsdiv);
-		tracks.set(trackName, {canvas, wordsdiv});
-	    }
-	}
+            if (seq.words.length && seq.words[0].name) {
+                const wordsdiv = document.createElement('div');
+                wordsdiv.classList.add('tracks');
+                container.appendChild(wordsdiv);
+                tracks.set(trackName, {canvas, wordsdiv});
+            }
+        }
 
-	const cursor = document.createElement('div');
-	cursor.style.border = '1px solid #f00';
-	cursor.style['box-sizing'] = 'border-box';
-	cursor.style.background = '#f00';
-	cursor.style.position = 'absolute';
-	cursor.style.top = 0;
-	cursor.style.left = 10;
-	cursor.style.width = '3px';
-	const cursorHeight = waveformHeight + (window.pitchTrack ? pitchHeight : 0);
-	cursor.style.height = `${cursorHeight}px`;
-	cursor.style.display = 'none';
-	cursor.classList.add('cursor');
-	container.appendChild(cursor);
+        const cursor = document.createElement('div');
+        cursor.style.border = '1px solid #f00';
+        cursor.style['box-sizing'] = 'border-box';
+        cursor.style.background = '#f00';
+        cursor.style.position = 'absolute';
+        cursor.style.top = 0;
+        cursor.style.left = 10;
+        cursor.style.width = '3px';
+        const cursorHeight = waveformHeight + (window.pitchTrack ? pitchHeight : 0);
+        cursor.style.height = `${cursorHeight}px`;
+        cursor.style.display = 'none';
+        cursor.classList.add('cursor');
+        container.appendChild(cursor);
 
-	_pagecache[n] = {ca,cursor,tracks,container,pitchCanvas};
+        _pagecache[n] = {ca,cursor,tracks,container,pitchCanvas};
     }
 
     return _pagecache[n];
@@ -477,12 +477,12 @@ function inull(i) {
 
 function alleq(xs, ys) {
     if (xs.length != ys.length) {
-	return false;
+        return false;
     }
     for (let i = 0; i < xs.length; i++) {
-	if (xs[i] != ys[i]) {
-	    return false;
-	}
+        if (xs[i] != ys[i]) {
+            return false;
+        }
     }
     return true;
 }
@@ -507,7 +507,7 @@ function scale([a,b], s) {
 function g2pages(i) {
     const out = [];
     if (!i) {
-	return out;
+        return out;
     }
 
     const [a,b] = i;
@@ -515,7 +515,7 @@ function g2pages(i) {
     const endpage = b/PAGESIZE|0;
 
     for (let p = startpage; p <= endpage; p++) {
-	out.push(p);
+        out.push(p);
     }
     return out;
 }
@@ -524,7 +524,7 @@ function g2pages(i) {
 function g2pagepixels(global, p, width) {
     const i = intersection(pageinterval(p), global);
     if (!i) {
-	return null;
+        return null;
     }
     const [start,b] = i;
     const duration = b-start;
@@ -549,21 +549,21 @@ function mergeuniq(xs, ys) {
     const out = [];
     let last = undefined;
     for (let x = 0, y = 0;;) {
-	if (x < xs.length && (y >= ys.length || xs[x] < ys[y])) {
-	    if (last != xs[x]) {
-		last = xs[x];
-		out.push(last);
-	    }
-	    x++;
-	} else if (y < ys.length) {
-	    if (last != ys[y]) {
-		last = ys[y];
-		out.push(last);
-	    }
-	    y++;
-	} else {
-	    break;
-	}
+        if (x < xs.length && (y >= ys.length || xs[x] < ys[y])) {
+            if (last != xs[x]) {
+                last = xs[x];
+                out.push(last);
+            }
+            x++;
+        } else if (y < ys.length) {
+            if (last != ys[y]) {
+                last = ys[y];
+                out.push(last);
+            }
+            y++;
+        } else {
+            break;
+        }
     }
     return out;
 }
@@ -575,10 +575,10 @@ function renderpagecursor(p) {
 
     const cursorLoc = cursorpos ? g2pagepixels(mkpoint(cursorpos), p, ca.width) : null;
     if (cursorLoc) {
-	cursor.style.display = 'block';
-	cursor.style.left = `${cursorLoc[0]/window.devicePixelRatio}px`;
+        cursor.style.display = 'block';
+        cursor.style.left = `${cursorLoc[0]/window.devicePixelRatio}px`;
     } else {
-	cursor.style.display = 'none';
+        cursor.style.display = 'none';
     }
 }
 
@@ -600,32 +600,32 @@ function playmegabuffer(payload, loopOverride=null) {
     cursource.buffer = buffer;
     cursource.loop = !!loop;
     if (loop) {
-	const loopStart = Math.max(0, (a - files[0].globalOffset) / srLocal);
-	const loopEnd = Math.max(loopStart, (b - files[0].globalOffset) / srLocal);
-	cursource.loopStart = loopStart;
-	cursource.loopEnd = loopEnd;
+        const loopStart = Math.max(0, (a - files[0].globalOffset) / srLocal);
+        const loopEnd = Math.max(loopStart, (b - files[0].globalOffset) / srLocal);
+        cursource.loopStart = loopStart;
+        cursource.loopEnd = loopEnd;
     }
 
     cursource.connect(globalAudioCtx.destination);
     cursource.onended = () => dostop();
     if (loop) {
-	cursource.start(0, Math.max(0, (a - files[0].globalOffset) / srLocal));
+        cursource.start(0, Math.max(0, (a - files[0].globalOffset) / srLocal));
     } else {
-	cursource.start(0, (a-files[0].globalOffset)/srLocal, (b-a)/srLocal);
+        cursource.start(0, (a-files[0].globalOffset)/srLocal, (b-a)/srLocal);
     }
 
     meme({playing: [a, b], files});
     const loopDuration = loop ? Math.max(1, b - a) : null;
     playerTimer = setInterval(function() {
-	const elapsed = globalAudioCtx ? globalAudioCtx.currentTime - cursorStartTime : 0;
-	if (loopDuration) {
-	    cursorpos = a + (elapsed * srLocal) % loopDuration;
-	} else {
-	    cursorpos = Math.min(b, a + elapsed * srLocal);
-	}
-	for (const p of g2pages(interval)) {
-	    renderpagecursor(p);
-	}
+        const elapsed = globalAudioCtx ? globalAudioCtx.currentTime - cursorStartTime : 0;
+        if (loopDuration) {
+            cursorpos = a + (elapsed * srLocal) % loopDuration;
+        } else {
+            cursorpos = Math.min(b, a + elapsed * srLocal);
+        }
+        for (const p of g2pages(interval)) {
+            renderpagecursor(p);
+        }
     }, 5);
 }
 
@@ -633,28 +633,28 @@ var lastplayed = null;
 
 function dostop() {
     if (cursource) {
-	if (globalAudioCtx && cursorStartTime != null && lastplayed) {
-	    const [a, b] = lastplayed.interval;
-	    const elapsed = globalAudioCtx.currentTime - cursorStartTime;
-	    const srLocal = lastplayed.buffer ? lastplayed.buffer.sampleRate || getSampleRate() : getSampleRate();
-	    if (lastplayed.loop) {
-		const dur = Math.max(1, b - a);
-		cursorpos = a + (elapsed * srLocal) % dur;
-	    } else {
-		cursorpos = Math.min(b, a + elapsed * srLocal);
-	    }
-	}
-	clearInterval(playerTimer);
-	playerTimer = null;
-	meme({stopped: Math.round(cursorpos), interval: lastplayed.interval});
-	cursource.stop(0);
-	cursource = null;
-	cursorStartTime = null;
+        if (globalAudioCtx && cursorStartTime != null && lastplayed) {
+            const [a, b] = lastplayed.interval;
+            const elapsed = globalAudioCtx.currentTime - cursorStartTime;
+            const srLocal = lastplayed.buffer ? lastplayed.buffer.sampleRate || getSampleRate() : getSampleRate();
+            if (lastplayed.loop) {
+                const dur = Math.max(1, b - a);
+                cursorpos = a + (elapsed * srLocal) % dur;
+            } else {
+                cursorpos = Math.min(b, a + elapsed * srLocal);
+            }
+        }
+        clearInterval(playerTimer);
+        playerTimer = null;
+        meme({stopped: Math.round(cursorpos), interval: lastplayed.interval});
+        cursource.stop(0);
+        cursource = null;
+        cursorStartTime = null;
 
-	cursorpos = null;
-	for (const p of g2pages(lastplayed.interval)) {
-	    renderpagecursor(p);
-	}
+        cursorpos = null;
+        for (const p of g2pages(lastplayed.interval)) {
+            renderpagecursor(p);
+        }
     }
 }
 
@@ -664,58 +664,58 @@ function playpause(sel, loop=false) {
 
     const files = window.allfiles.intersect(interval);
     if (!files.length) {
-	meme({error: "nothing to play"});
-	return;
+        meme({error: "nothing to play"});
+        return;
     }
 
     if (cursource) {
-	if (cursource == 'wait') {
-	    cursource = 'nevermind';
-	    return;
-	}
-	dostop();
-	return;
+        if (cursource == 'wait') {
+            cursource = 'nevermind';
+            return;
+        }
+        dostop();
+        return;
     }
 
     cursource = 'wait';
 
     if (lastplayed && ieq(lastplayed.interval, interval)) {
-	lastplayed.loop = loop;
-	playmegabuffer(lastplayed, loop);
-	return;
+        lastplayed.loop = loop;
+        playmegabuffer(lastplayed, loop);
+        return;
     }
 
     function playbuffers(buffers, loopFlag) {
-	if (cursource == 'nevermind') {
-	    cursource = null;
-	    return;
-	}
+        if (cursource == 'nevermind') {
+            cursource = null;
+            return;
+        }
 
-	if (!globalAudioCtx) {
-	    globalAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-	}
+        if (!globalAudioCtx) {
+            globalAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
 
-	var curbuffer = globalAudioCtx.createBuffer(1, buffers.reduce((a,x) => a+x.length, 0), buffers[0].sampleRate);
-	for (let i = 0, offset = 0; i < buffers.length; i++) {
-	    curbuffer.copyToChannel(buffers[i].getChannelData(0), 0, offset);
-	    offset += buffers[i].length;
-	}
+        var curbuffer = globalAudioCtx.createBuffer(1, buffers.reduce((a,x) => a+x.length, 0), buffers[0].sampleRate);
+        for (let i = 0, offset = 0; i < buffers.length; i++) {
+            curbuffer.copyToChannel(buffers[i].getChannelData(0), 0, offset);
+            offset += buffers[i].length;
+        }
 
-	lastplayed = {interval, files, buffers, buffer: curbuffer, loop: loopFlag};
-	playmegabuffer(lastplayed, loopFlag);
+        lastplayed = {interval, files, buffers, buffer: curbuffer, loop: loopFlag};
+        playmegabuffer(lastplayed, loopFlag);
     }
 
     if (lastplayed && alleq(files.map(x => x.filename), lastplayed.files.map(x => x.filename))) {
-	playbuffers(lastplayed.buffers, loop);
-	return;
+        playbuffers(lastplayed.buffers, loop);
+        return;
     }
 
     meme({loading: files});
 
     Promise.all(files.map(({filename}) => {
-	return fetch(filename, {cache: "force-cache"}).then(function(response) {
-	    return response.arrayBuffer();
-	}).then(decodeAudio);
+        return fetch(filename, {cache: "force-cache"}).then(function(response) {
+            return response.arrayBuffer();
+        }).then(decodeAudio);
     })).then(buffers => playbuffers(buffers, loop));
 }
 
@@ -724,37 +724,37 @@ function getBuffersForFiles(files) {
     const allfileEntries = window.allfiles && window.allfiles.words;
 
     if (cached && allfileEntries && cached.length === allfileEntries.length) {
-	const maybeBuffers = files.map(f => cached[allfileEntries.indexOf(f)]);
-	if (maybeBuffers.every(Boolean)) {
-	    return Promise.resolve(maybeBuffers);
-	}
+        const maybeBuffers = files.map(f => cached[allfileEntries.indexOf(f)]);
+        if (maybeBuffers.every(Boolean)) {
+            return Promise.resolve(maybeBuffers);
+        }
     }
 
     return Promise.all(files.map(({filename}) => {
-	return fetch(filename, {cache: "force-cache"}).then(function(response) {
-	    return response.arrayBuffer();
-	}).then(decodeAudio);
+        return fetch(filename, {cache: "force-cache"}).then(function(response) {
+            return response.arrayBuffer();
+        }).then(decodeAudio);
     }));
 }
 
 function chooseFileIndexForTime(time, files) {
     if (!files || !files.length) {
-	return null;
+        return null;
     }
     const idx = files.findIndex(f => time >= f.interval[0] && time <= f.interval[1]);
     if (idx !== -1) {
-	return idx;
+        return idx;
     }
     // Fallback: pick closest boundary.
     let bestIdx = 0;
     let bestDist = Math.abs(time - files[0].interval[0]);
     for (let i = 0; i < files.length; i++) {
-	const f = files[i];
-	const dist = time < f.interval[0] ? f.interval[0] - time : time - f.interval[1];
-	if (dist < bestDist) {
-	    bestDist = dist;
-	    bestIdx = i;
-	}
+        const f = files[i];
+        const dist = time < f.interval[0] ? f.interval[0] - time : time - f.interval[1];
+        if (dist < bestDist) {
+            bestDist = dist;
+            bestIdx = i;
+        }
     }
     return bestIdx;
 }
@@ -762,16 +762,16 @@ function chooseFileIndexForTime(time, files) {
 function findNearestZeroTime(time, files, buffers) {
     const fi = chooseFileIndexForTime(time, files);
     if (fi == null || fi < 0 || fi >= buffers.length) {
-	return time;
+        return time;
     }
     const file = files[fi];
     const buffer = buffers[fi];
     if (!buffer || !buffer.getChannelData) {
-	return time;
+        return time;
     }
     const data = buffer.getChannelData(0);
     if (!data || !data.length) {
-	return time;
+        return time;
     }
     const srLocal = buffer.sampleRate || getSampleRate();
     let idx = Math.round(time - file.globalOffset);
@@ -784,39 +784,39 @@ function findNearestZeroTime(time, files, buffers) {
     let bestDist = Infinity;
 
     for (let i = start; i <= end; i++) {
-	const a = data[i];
-	const b = data[i + 1];
-	const hasCross = (a === 0) || (b === 0) || (a > 0 && b < 0) || (a < 0 && b > 0);
-	if (hasCross) {
-	    const frac = (a === b) ? 0 : (a / (a - b));
-	    const clampedFrac = Math.min(1, Math.max(0, frac));
-	    const pos = i + clampedFrac;
-	    const dist = Math.abs(pos - idx);
-	    if (dist < bestDist) {
-		bestDist = dist;
-		bestPos = pos;
-		if (bestDist === 0) break;
-	    }
-	}
+        const a = data[i];
+        const b = data[i + 1];
+        const hasCross = (a === 0) || (b === 0) || (a > 0 && b < 0) || (a < 0 && b > 0);
+        if (hasCross) {
+            const frac = (a === b) ? 0 : (a / (a - b));
+            const clampedFrac = Math.min(1, Math.max(0, frac));
+            const pos = i + clampedFrac;
+            const dist = Math.abs(pos - idx);
+            if (dist < bestDist) {
+                bestDist = dist;
+                bestPos = pos;
+                if (bestDist === 0) break;
+            }
+        }
     }
 
     if (!isFinite(bestDist) || bestDist === Infinity) {
-	// fallback: nearest small-magnitude sample
-	for (let step = 0; step <= maxSearch; step++) {
-	    const candidates = [];
-	    if (idx - step >= 0) candidates.push(idx - step);
-	    if (idx + step < data.length) candidates.push(idx + step);
-	    for (const ci of candidates) {
-		const dist = Math.abs(ci - idx);
-		if (dist >= bestDist) continue;
-		bestDist = dist;
-		bestPos = ci;
-		if (Math.abs(data[ci]) < 1e-6) {
-		    step = maxSearch + 1;
-		    break;
-		}
-	    }
-	}
+        // fallback: nearest small-magnitude sample
+        for (let step = 0; step <= maxSearch; step++) {
+            const candidates = [];
+            if (idx - step >= 0) candidates.push(idx - step);
+            if (idx + step < data.length) candidates.push(idx + step);
+            for (const ci of candidates) {
+                const dist = Math.abs(ci - idx);
+                if (dist >= bestDist) continue;
+                bestDist = dist;
+                bestPos = ci;
+                if (Math.abs(data[ci]) < 1e-6) {
+                    step = maxSearch + 1;
+                    break;
+                }
+            }
+        }
     }
 
     return file.globalOffset + bestPos;
@@ -824,58 +824,58 @@ function findNearestZeroTime(time, files, buffers) {
 
 function snapSelectionToZeroCrossing(interval) {
     if (!interval || inull(interval)) {
-	meme({error: "no selection to snap"});
-	return;
+        meme({error: "no selection to snap"});
+        return;
     }
     const files = window.allfiles.intersect(interval);
     if (!files.length) {
-	meme({error: "selection not covered by audio"});
-	return;
+        meme({error: "selection not covered by audio"});
+        return;
     }
     getBuffersForFiles(files).then(buffers => {
-	const a = findNearestZeroTime(interval[0], files, buffers);
-	const b = findNearestZeroTime(interval[1], files, buffers);
-	const snapped = mkinterval(Math.min(a, b), Math.max(a, b));
-	if (snapped) {
-	    sel = snapped;
-	    selstart = snapped[0];
-	    selnow = snapped[1];
-	    refreshpages();
-	    meme({snapped});
-	}
+        const a = findNearestZeroTime(interval[0], files, buffers);
+        const b = findNearestZeroTime(interval[1], files, buffers);
+        const snapped = mkinterval(Math.min(a, b), Math.max(a, b));
+        if (snapped) {
+            sel = snapped;
+            selstart = snapped[0];
+            selnow = snapped[1];
+            refreshpages();
+            meme({snapped});
+        }
     }).catch(err => {
-	meme({error: "snap failed", details: err.message});
+        meme({error: "snap failed", details: err.message});
     });
 }
 
 function estimateGlottalPeriod(time) {
     if (!window.pitchTrack || !window.pitchTrack.values || !window.pitchTrack.values.length) {
-	return getSampleRate() / 120; // samples for ~120 Hz
+        return getSampleRate() / 120; // samples for ~120 Hz
     }
     const {values, hop} = window.pitchTrack;
     const radius = 50; // search nearby frames for voiced pitch
     const center = Math.round(time / hop);
     for (let r = 0; r <= radius; r++) {
-	for (const idx of [center - r, center + r]) {
-	    if (idx < 0 || idx >= values.length) continue;
-	    const f0 = values[idx];
-	    if (f0 && f0 > 0) {
-		return getSampleRate() / f0;
-	    }
-	}
+        for (const idx of [center - r, center + r]) {
+            if (idx < 0 || idx >= values.length) continue;
+            const f0 = values[idx];
+            if (f0 && f0 > 0) {
+                return getSampleRate() / f0;
+            }
+        }
     }
     return getSampleRate() / 120;
 }
 
 function snapSelectionToGlottalPeriods(interval) {
     if (!interval || inull(interval)) {
-	meme({error: "no selection to snap"});
-	return;
+        meme({error: "no selection to snap"});
+        return;
     }
     const files = window.allfiles.intersect(interval);
     if (!files.length) {
-	meme({error: "selection not covered by audio"});
-	return;
+        meme({error: "selection not covered by audio"});
+        return;
     }
     const center = (interval[0] + interval[1]) / 2;
     const period = estimateGlottalPeriod(center);
@@ -884,54 +884,54 @@ function snapSelectionToGlottalPeriods(interval) {
     const targetEnd = center + targetDur / 2;
 
     getBuffersForFiles(files).then(buffers => {
-	const a = findNearestZeroTime(targetStart, files, buffers);
-	const b = findNearestZeroTime(targetEnd, files, buffers);
-	const snapped = mkinterval(Math.min(a, b), Math.max(a, b));
-	if (snapped) {
-	    sel = snapped;
-	    selstart = snapped[0];
-	    selnow = snapped[1];
-	    refreshpages();
-	    meme({snapped, period});
-	}
+        const a = findNearestZeroTime(targetStart, files, buffers);
+        const b = findNearestZeroTime(targetEnd, files, buffers);
+        const snapped = mkinterval(Math.min(a, b), Math.max(a, b));
+        if (snapped) {
+            sel = snapped;
+            selstart = snapped[0];
+            selnow = snapped[1];
+            refreshpages();
+            meme({snapped, period});
+        }
     }).catch(err => {
-	meme({error: "glottal snap failed", details: err.message});
+        meme({error: "glottal snap failed", details: err.message});
     });
 }
 
 function extractSamplesFromBuffers(interval, files, buffers) {
     if (!buffers || !buffers.length) {
-	return null;
+        return null;
     }
     const sampleRate = buffers[0].sampleRate;
     const chunks = [];
     let totalLength = 0;
 
     for (let i = 0; i < files.length; i++) {
-	const fileInterval = files[i].interval;
-	const overlap = intersection(fileInterval, interval);
-	if (!overlap || inull(overlap)) {
-	    continue;
-	}
-	const buffer = buffers[i];
-	if (buffer.sampleRate !== sampleRate) {
-	    throw new Error("sample rate mismatch across files");
-	}
-	const start = Math.max(0, Math.floor(overlap[0] - files[i].globalOffset));
-	const end = Math.min(buffer.length, Math.ceil(overlap[1] - files[i].globalOffset));
-	if (end <= start) {
-	    continue;
-	}
-	const chunk = buffer.getChannelData(0).slice(start, end);
-	chunks.push(chunk);
-	totalLength += chunk.length;
+        const fileInterval = files[i].interval;
+        const overlap = intersection(fileInterval, interval);
+        if (!overlap || inull(overlap)) {
+            continue;
+        }
+        const buffer = buffers[i];
+        if (buffer.sampleRate !== sampleRate) {
+            throw new Error("sample rate mismatch across files");
+        }
+        const start = Math.max(0, Math.floor(overlap[0] - files[i].globalOffset));
+        const end = Math.min(buffer.length, Math.ceil(overlap[1] - files[i].globalOffset));
+        if (end <= start) {
+            continue;
+        }
+        const chunk = buffer.getChannelData(0).slice(start, end);
+        chunks.push(chunk);
+        totalLength += chunk.length;
     }
 
     const out = new Float32Array(totalLength);
     let offset = 0;
     for (const chunk of chunks) {
-	out.set(chunk, offset);
-	offset += chunk.length;
+        out.set(chunk, offset);
+        offset += chunk.length;
     }
 
     return {samples: out, sampleRate};
@@ -942,9 +942,9 @@ function encodeMonoWav(samples, sampleRate) {
     const view = new DataView(buffer);
 
     function writeString(offset, str) {
-	for (let i = 0; i < str.length; i++) {
-	    view.setUint8(offset + i, str.charCodeAt(i));
-	}
+        for (let i = 0; i < str.length; i++) {
+            view.setUint8(offset + i, str.charCodeAt(i));
+        }
     }
 
     let offset = 0;
@@ -963,8 +963,8 @@ function encodeMonoWav(samples, sampleRate) {
     view.setUint32(offset, samples.length * 2, true); offset += 4;
 
     for (let i = 0; i < samples.length; i++, offset += 2) {
-	const s = Math.max(-1, Math.min(1, samples[i]));
-	view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+        const s = Math.max(-1, Math.min(1, samples[i]));
+        view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
     }
 
     return buffer;
@@ -972,46 +972,46 @@ function encodeMonoWav(samples, sampleRate) {
 
 function downloadSelectionAsWav(interval, loopCount=1) {
     if (!interval || inull(interval)) {
-	meme({error: "select an interval to download"});
-	return;
+        meme({error: "select an interval to download"});
+        return;
     }
     const files = window.allfiles.intersect(interval);
     if (!files.length) {
-	meme({error: "nothing to download for selection"});
-	return;
+        meme({error: "nothing to download for selection"});
+        return;
     }
 
     getBuffersForFiles(files).then(buffers => {
-	const extracted = extractSamplesFromBuffers(interval, files, buffers);
-	if (!extracted || !extracted.samples || !extracted.samples.length) {
-	    meme({error: "no samples extracted for selection"});
-	    return;
-	}
-	const {samples, sampleRate} = extracted;
-	let toWrite = samples;
-	if (loopCount > 1) {
-	    const out = new Float32Array(samples.length * loopCount);
-	    for (let i = 0; i < loopCount; i++) {
-		out.set(samples, i * samples.length);
-	    }
-	    toWrite = out;
-	}
-	const wavBuffer = encodeMonoWav(toWrite, sampleRate);
-	const blob = new Blob([wavBuffer], {type: 'audio/wav'});
-	const url = URL.createObjectURL(blob);
-	const [a,b] = interval;
-	const loopTag = loopCount > 1 ? `x${loopCount}` : null;
-	const fname = `selection_${a}-${b}${loopTag ? '_' + loopTag : ''}.wav`;
-	const anchor = document.createElement('a');
-	anchor.href = url;
-	anchor.download = fname;
-	document.body.appendChild(anchor);
-	anchor.click();
-	anchor.remove();
-	setTimeout(() => URL.revokeObjectURL(url), 1000);
-	meme({download: fname, interval});
+        const extracted = extractSamplesFromBuffers(interval, files, buffers);
+        if (!extracted || !extracted.samples || !extracted.samples.length) {
+            meme({error: "no samples extracted for selection"});
+            return;
+        }
+        const {samples, sampleRate} = extracted;
+        let toWrite = samples;
+        if (loopCount > 1) {
+            const out = new Float32Array(samples.length * loopCount);
+            for (let i = 0; i < loopCount; i++) {
+                out.set(samples, i * samples.length);
+            }
+            toWrite = out;
+        }
+        const wavBuffer = encodeMonoWav(toWrite, sampleRate);
+        const blob = new Blob([wavBuffer], {type: 'audio/wav'});
+        const url = URL.createObjectURL(blob);
+        const [a,b] = interval;
+        const loopTag = loopCount > 1 ? `x${loopCount}` : null;
+        const fname = `selection_${a}-${b}${loopTag ? '_' + loopTag : ''}.wav`;
+        const anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.download = fname;
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        meme({download: fname, interval});
     }).catch(err => {
-	meme({error: "download failed", details: err.message});
+        meme({error: "download failed", details: err.message});
     });
 }
 
@@ -1037,25 +1037,25 @@ function renderwaveform(p, ca, allsamples, localSelection) {
     let lo = true;
 
     for (const sample of samples) {
-	const amp = Math.min(1, Math.abs(sample) * waveformGain);
-	ctx.fillStyle = 'gray';
+        const amp = Math.min(1, Math.abs(sample) * waveformGain);
+        ctx.fillStyle = 'gray';
 
-	if (lo) {
-	    ctx.fillRect( x * w, 0, w, -amp * loHeight );
-	} else {
-	    ctx.fillRect( x * w, 0, w, amp * (ca.height - loHeight) );
+        if (lo) {
+            ctx.fillRect( x * w, 0, w, -amp * loHeight );
+        } else {
+            ctx.fillRect( x * w, 0, w, amp * (ca.height - loHeight) );
 
-	    x++;
-	}
-	lo = !lo;
+            x++;
+        }
+        lo = !lo;
     }
 
     ctx.resetTransform();
 
     if (localSelection) {
-	ctx.fillStyle = '#98444755';
-	const [a,b] = localSelection;
-	ctx.fillRect( a, 0, b-a, ca.height );
+        ctx.fillStyle = '#98444755';
+        const [a,b] = localSelection;
+        ctx.fillRect( a, 0, b-a, ca.height );
     }
 }
 
@@ -1122,14 +1122,14 @@ function renderintervals(p, intervalTrackName, {canvas}, intervalTrack, localSel
     const pad = 2;
 
     for (const {interval} of intervalTrack.intersect(pageinterval(p))) {
-	const [x,y] = g2pagepixels(interval, p, canvas.width);
-	ctx.fillRect( x + pad, 0, y-x - pad, canvas.height );
+        const [x,y] = g2pagepixels(interval, p, canvas.width);
+        ctx.fillRect( x + pad, 0, y-x - pad, canvas.height );
     }
 
     if (localSelection) {
-	ctx.fillStyle = '#98444755';
-	const [a,b] = localSelection;
-	ctx.fillRect( a + pad, 0, b-a - pad, canvas.height );
+        ctx.fillStyle = '#98444755';
+        const [a,b] = localSelection;
+        ctx.fillRect( a + pad, 0, b-a - pad, canvas.height );
     }
 }
 
@@ -1151,17 +1151,17 @@ function renderpage(p) {
 
     renderwaveform(p, ca, window.samples, localSelection);
     if (pitchCanvas && window.pitchTrack) {
-	renderpitch(p, pitchCanvas, window.pitchTrack, localSelection);
+        renderpitch(p, pitchCanvas, window.pitchTrack, localSelection);
     }
 
     for (const [intervalTrackName, t] of tracks) {
-	const seq = window.intervalTracks.get(intervalTrackName);
-	if (t.canvas) {
-	    renderintervals(p, intervalTrackName, t, seq, localSelection);
-	}
-	if (t.wordsdiv) {
-	    renderwords(p, intervalTrackName, t, seq, localSelection);
-	}
+        const seq = window.intervalTracks.get(intervalTrackName);
+        if (t.canvas) {
+            renderintervals(p, intervalTrackName, t, seq, localSelection);
+        }
+        if (t.wordsdiv) {
+            renderwords(p, intervalTrackName, t, seq, localSelection);
+        }
     }
 }
 
@@ -1178,27 +1178,27 @@ function selectwords() {
     console.log({anchorNode, focusNode});
 
     if (anchorNode &&
-	anchorNode.parentNode &&
-	anchorNode.parentNode.dataset.offset &&
-	focusNode &&
-	focusNode.parentNode &&
-	focusNode.parentNode.dataset.offset) {
+        anchorNode.parentNode &&
+        anchorNode.parentNode.dataset.offset &&
+        focusNode &&
+        focusNode.parentNode &&
+        focusNode.parentNode.dataset.offset) {
 
-	const trackDiv = focusNode.parentNode.parentNode;
-	let interval = union(spaninterval(anchorNode.parentNode), spaninterval(focusNode.parentNode));
-	interval = imargin(interval);
+        const trackDiv = focusNode.parentNode.parentNode;
+        let interval = union(spaninterval(anchorNode.parentNode), spaninterval(focusNode.parentNode));
+        interval = imargin(interval);
 
-	sel = interval;
-	selstart = interval[0];
-	selnow = interval[1];
+        sel = interval;
+        selstart = interval[0];
+        selnow = interval[1];
 
-	const intervals = window.intervalTracks.get(trackDiv.dataset.intervalTrackName);
-	const ix = intervals.intersect(interval);
+        const intervals = window.intervalTracks.get(trackDiv.dataset.intervalTrackName);
+        const ix = intervals.intersect(interval);
 
-	const selinfo = {sel, track: trackDiv.dataset.intervalTrackName, items: ix}
-	meme(selinfo);
-	refreshpages();
-	return selinfo;
+        const selinfo = {sel, track: trackDiv.dataset.intervalTrackName, items: ix}
+        meme(selinfo);
+        refreshpages();
+        return selinfo;
     }
 
     return null;
@@ -1238,69 +1238,69 @@ function changeWaveformGain(delta) {
 
 document.body.addEventListener('keydown', function(e) {
     if (e.code == 'Space' || e.code == 'Enter' || e.code == 'Escape' || e.code == 'Backspace' || e.code == 'KeyK' || e.code == 'KeyW' || e.code == 'KeyS' || e.code == 'KeyR' || e.code == 'KeyZ') {
-	e.preventDefault();
+        e.preventDefault();
     }
 });
 
 document.body.addEventListener('keyup', function(e) {
     if (e.code == 'Space') {
-	e.preventDefault();
+        e.preventDefault();
 
-	playpause(sel, e.shiftKey);
+        playpause(sel, e.shiftKey);
     } else if (e.code == 'Enter') {
-	e.preventDefault();
+        e.preventDefault();
 
-	if (window.intervalTracks.get('conversations').create(sel)) {
-	    meme({enter: sel, track: 'conversations'});
-	    for (const p of g2pages(sel)) {
-		renderpage(p);
-	    }
-	} else {
-	    meme({enter: sel, error: 'could not create because overlaps existing interval'});
-	}
+        if (window.intervalTracks.get('conversations').create(sel)) {
+            meme({enter: sel, track: 'conversations'});
+            for (const p of g2pages(sel)) {
+                renderpage(p);
+            }
+        } else {
+            meme({enter: sel, error: 'could not create because overlaps existing interval'});
+        }
     } else if (e.code == 'Escape') {
-	e.preventDefault();
-	clearSelection();
+        e.preventDefault();
+        clearSelection();
     } else if (e.code == 'Backspace') {
-	e.preventDefault();
-	const remaining = window.intervalTracks.get('conversations').killIntersection(sel);
-	meme({remaining});
-	for (const p of g2pages(sel)) {
-	    renderpage(p);
-	}
+        e.preventDefault();
+        const remaining = window.intervalTracks.get('conversations').killIntersection(sel);
+        meme({remaining});
+        for (const p of g2pages(sel)) {
+            renderpage(p);
+        }
     } else if (e.code == 'KeyK') {
 
     } else if (e.code == 'KeyW') {
-	selectwords();
+        selectwords();
     } else if (e.code == 'KeyR') {
-	// TODO: rename word
+        // TODO: rename word
     } else if (e.code == 'KeyZ') {
-	e.preventDefault();
-	if (e.shiftKey) {
-	    snapSelectionToGlottalPeriods(sel);
-	} else {
-	    snapSelectionToZeroCrossing(sel);
-	}
+        e.preventDefault();
+        if (e.shiftKey) {
+            snapSelectionToGlottalPeriods(sel);
+        } else {
+            snapSelectionToZeroCrossing(sel);
+        }
     } else if (e.code == 'KeyS') {
-	e.preventDefault();
-	if (e.shiftKey) {
-	    downloadSelectionAsWav(sel, 16);
-	} else {
-	    downloadSelectionAsWav(sel);
-	}
+        e.preventDefault();
+        if (e.shiftKey) {
+            downloadSelectionAsWav(sel, 16);
+        } else {
+            downloadSelectionAsWav(sel);
+        }
     } else if (isPlusKey(e)) {
-	e.preventDefault();
-	if (e.shiftKey) {
-	    changeWaveformGain(10);
-	} else {
-	    changePageSize(-0.1 * getSampleRate());
-	}
+        e.preventDefault();
+        if (e.shiftKey) {
+            changeWaveformGain(10);
+        } else {
+            changePageSize(-0.1 * getSampleRate());
+        }
     } else if (isMinusKey(e)) {
-	e.preventDefault();
-	if (e.shiftKey) {
-	    changeWaveformGain(-10);
-	} else {
-	    changePageSize(0.1 * getSampleRate());
-	}
+        e.preventDefault();
+        if (e.shiftKey) {
+            changeWaveformGain(-10);
+        } else {
+            changePageSize(0.1 * getSampleRate());
+        }
     }
 });
