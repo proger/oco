@@ -20,5 +20,8 @@ dev = [
     "mypy",
 ]
 
+[tool.mypy]
+python_version = "3.12"
+
 [project.urls]
 Home = "https://github.com/proger/oco"
